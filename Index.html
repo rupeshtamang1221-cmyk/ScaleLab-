@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScaleLab</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap');
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        h1 { color: #f39c12; }
+
+        .controls {
+            background-color: #1e1e1e;
+            padding: 20px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        label {
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #bbb;
+        }
+
+        select, button {
+            padding: 10px 15px;
+            font-size: 16px;
+            border-radius: 12px;
+            border: 1px solid #333;
+            background-color: #2a2a2a;
+            color: white;
+            outline: none;
+        }
+
+        button {
+            background-color: #f39c12;
+            color: #121212;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            transition: 0.3s ease;
+            box-shadow: 0 4px 12px rgba(243,156,18,0.35);
+        }
+
+        button:hover { background-color: #e67e22; }
+
+        .mode-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .mode-card {
+            background-color: #1e1e1e;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 5px solid #f39c12;
+            text-align: left;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            transition: transform 0.2s;
+        }
+
+        .mode-card:hover { transform: scale(1.02); }
+        .mode-card h3 { margin-top: 0; color: #f39c12; font-size: 1.1em; }
+        .mode-card p { font-size: 1.1em; letter-spacing: 1px; margin: 10px 0 0 0; }
+
+        /* LICENSE GATE */
+        #licenseGate {
+            position: fixed;
+            inset: 0;
+            background: #0a0a0a;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Syne', sans-serif;
+        }
+
+        .gate-box {
+            background: #1a1a1a;
+            border: 1px solid #f39c12;
+            border-radius: 16px;
+            padding: 40px;
+            max-width: 420px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .gate-box h2 {
+            color: #f39c12;
+            font-size: 1.8em;
+            margin-bottom: 8px;
+        }
+
+        .gate-box p {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 25px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .gate-input {
+            width: 100%;
+            padding: 14px;
+            background: #0a0a0a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: #f39c12;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1em;
+            letter-spacing: 2px;
+            text-align: center;
+            margin-bottom: 15px;
+            outline: none;
+            transition: border 0.2s;
+        }
+
+        .gate-input:focus { border-color: #f39c12; }
+
+        .gate-btn {
+            width: 100%;
+            padding: 14px;
+            background: #f39c12;
+            color: #0a0a0a;
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 1em;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .gate-btn:hover { background: #e67e22; }
+
+        .gate-error {
+            color: #e74c3c;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85em;
+            margin-top: 12px;
+            display: none;
+        }
+
+        .price-tag {
+            margin-top: 20px;
+            color: #444;
+            font-size: 0.8em;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .price-tag span {
+            color: #f39c12;
+        }
+    </style>
+</head>
+<body>
+
+<!-- LICENSE GATE -->
+<div id="licenseGate">
+    <div class="gate-box">
+        <h2>🎸 ScaleLab</h2>
+        <p>// License Key राख्नुस् App खोल्न</p>
+        <input type="text" class="gate-input" id="keyInput" placeholder="SL-XXXX-XXXX-XXXX-XXXX" maxlength="22" oninput="formatKey(this)" />
+        <button class="gate-btn" onclick="verifyKey()">🔓 Unlock App</button>
+        <div class="gate-error" id="gateError">❌ Invalid Key! सही key हाल्नुस्।</div>
+        <p class="price-tag">License: <span>NPR 200</span> | Contact to purchase</p>
+    </div>
+</div>
+
+<!-- MAIN APP -->
+<div class="container" id="mainApp" style="display:none;">
+    <h1>ScaleLab - Scale & Mode Finder</h1>
+    <p>Discover scales, modes</p>
+
+    <div class="controls">
+        <div class="input-group">
+            <label for="rootNote">Root Note:</label>
+            <select id="rootNote">
+                <option value="C">C</option>
+                <option value="C#">C# / Db</option>
+                <option value="D">D</option>
+                <option value="D#">D# / Eb</option>
+                <option value="E">E</option>
+                <option value="F">F</option>
+                <option value="F#">F# / Gb</option>
+                <option value="G">G</option>
+                <option value="G#">G# / Ab</option>
+                <option value="A" selected>A</option>
+                <option value="A#">A# / Bb</option>
+                <option value="B">B</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label for="scaleType">Scale Type:</label>
+            <select id="scaleType">
+                <option value="major">Major Scale (Natural)</option>
+                <option value="minor">Minor Scale (Natural)</option>
+                <option value="melodic_major">Melodic Major</option>
+                <option value="melodic_minor">Melodic Minor</option>
+                <option value="harmonic_major">Harmonic Major</option>
+                <option value="harmonic_minor">Harmonic Minor</option>
+                <option value="double_harmonic_major">Double Harmonic Major</option>
+                <option value="double_harmonic_minor">Double Harmonic Minor</option>
+                <option value="major_pentatonic" style="color:#f39c12;">Major Pentatonic</option>
+                <option value="minor_pentatonic" style="color:#f39c12;">Minor Pentatonic</option>
+                <option value="major_blues" style="color:#e74c3c;">Major Blues</option>
+                <option value="minor_blues" style="color:#e74c3c;">Minor Blues</option>
+            </select>
+        </div>
+
+        <button onclick="generateModes()">Show All Modes</button>
+    </div>
+
+    <div id="output" class="output-container"></div>
+</div>
+
+<script>
+    const ADMIN_STORAGE_KEY = 'scalelab_admin_keys';
+    const USED_KEYS_KEY = 'scalelab_used_keys';
+    const ACTIVE_KEY_KEY = 'scalelab_active_key';
+
+    // Check if already unlocked
+    window.onload = function() {
+        const savedKey = localStorage.getItem(ACTIVE_KEY_KEY);
+        if (savedKey && isValidKey(savedKey)) {
+            unlockApp();
+        }
+    };
+
+    function formatKey(input) {
+        let val = input.value.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+        let formatted = '';
+        if (val.startsWith('SL')) {
+            formatted = 'SL-';
+            val = val.slice(2);
+        }
+        let parts = val.match(/.{1,4}/g) || [];
+        formatted += parts.slice(0, 4).join('-');
+        input.value = formatted;
+    }
+
+    function isValidKey(key) {
+        const keys = JSON.parse(localStorage.getItem(ADMIN_STORAGE_KEY) || '[]');
+        return keys.some(k => k.key === key && k.status === 'active');
+    }
+
+    function markKeyAsUsed(key) {
+        // Mark in admin keys
+        const keys = JSON.parse(localStorage.getItem(ADMIN_STORAGE_KEY) || '[]');
+        keys.forEach(k => { if (k.key === key) k.status = 'used'; });
+        localStorage.setItem(ADMIN_STORAGE_KEY, JSON.stringify(keys));
+
+        // Track used keys
+        const usedKeys = JSON.parse(localStorage.getItem(USED_KEYS_KEY) || '[]');
+        if (!usedKeys.includes(key)) usedKeys.push(key);
+        localStorage.setItem(USED_KEYS_KEY, JSON.stringify(usedKeys));
+    }
+
+    function verifyKey() {
+        const input = document.getElementById('keyInput').value.trim();
+        const error = document.getElementById('gateError');
+
+        if (isValidKey(input)) {
+            markKeyAsUsed(input);
+            localStorage.setItem(ACTIVE_KEY_KEY, input);
+            error.style.display = 'none';
+            unlockApp();
+        } else {
+            error.style.display = 'block';
+            document.getElementById('keyInput').style.borderColor = '#e74c3c';
+        }
+    }
+
+    function unlockApp() {
+        document.getElementById('licenseGate').style.display = 'none';
+        document.getElementById('mainApp').style.display = 'block';
+        generateModes();
+    }
+
+    // Allow Enter key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && document.getElementById('licenseGate').style.display !== 'none') {
+            verifyKey();
+        }
+    });
+
+    // SCALE APP LOGIC
+    const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+
+    const scaleData = {
+        major: { intervals:[0,2,4,5,7,9,11], modeNames:["Ionian (Major)","Dorian","Phrygian","Lydian","Mixolydian","Aeolian (Minor)","Locrian"] },
+        minor: { intervals:[0,2,3,5,7,8,10], modeNames:["Aeolian (Natural Minor)","Locrian","Ionian","Dorian","Phrygian","Lydian","Mixolydian"] },
+        melodic_major: { intervals:[0,2,4,5,7,8,10], modeNames:["Melodic Major","Locrian ♮2","Altered Scale","Melodic Minor","Dorian b2","Lydian Augmented","Lydian Dominant"] },
+        melodic_minor: { intervals:[0,2,3,5,7,9,11], modeNames:["Melodic Minor","Dorian b2","Lydian Augmented","Lydian Dominant","Mixolydian b6","Locrian ♮2","Altered Scale"] },
+        harmonic_major: { intervals:[0,2,4,5,7,8,11], modeNames:["Harmonic Major","Dorian b5","Phrygian b4","Lydian b3 (Minor)","Mixolydian b2","Lydian Augmented #2","Locrian bb7"] },
+        harmonic_minor: { intervals:[0,2,3,5,7,8,11], modeNames:["Harmonic Minor","Locrian ♮6","Ionian Augmented","Dorian #4","Phrygian Dominant","Lydian #2","Ultralocrian"] },
+        double_harmonic_major: { intervals:[0,1,4,5,7,8,11], modeNames:["Double Harmonic Major","Lydian #2 #6","Ultraphrygian","Hungarian Minor","Oriental","Ionian Augmented #2","Locrian bb3 bb7"] },
+        double_harmonic_minor: { intervals:[0,2,3,6,7,8,11], modeNames:["Double Harmonic Minor","Oriental","Ionian Augmented #2","Locrian bb3 bb7","Double Harmonic Major","Lydian #2 #6","Ultraphrygian"] },
+        major_pentatonic: { intervals:[0,2,4,7,9], modeNames:["Major Pentatonic","Suspended Pentatonic","Man Gong (Phrygian Pentatonic)","Scottish (Mixolydian Pentatonic)","Minor Pentatonic"] },
+        minor_pentatonic: { intervals:[0,3,5,7,10], modeNames:["Minor Pentatonic","Major Pentatonic","Suspended Pentatonic","Man Gong (Phrygian Pentatonic)","Scottish (Mixolydian Pentatonic)"] },
+        minor_blues: { intervals:[0,3,5,6,7,10], modeNames:["Minor Blues","Major Blues","Blues Mode 3","Blues Mode 4","Blues Mode 5","Blues Mode 6"] },
+        major_blues: { intervals:[0,2,3,4,7,9], modeNames:["Major Blues","Blues Mode 3","Blues Mode 4","Blues Mode 5","Blues Mode 6","Minor Blues"] }
+    };
+
+    function getScaleNotes(rootIndex, intervals) {
+        return intervals.map(interval => notes[(rootIndex + interval) % 12]);
+    }
+
+    function generateModes() {
+        const rootInput = document.getElementById('rootNote').value;
+        const scaleType = document.getElementById('scaleType').value;
+        const rootNote = rootInput.split(' ')[0];
+        const rootIndex = notes.indexOf(rootNote);
+        const selectedScale = scaleData[scaleType];
+        const baseScaleNotes = getScaleNotes(rootIndex, selectedScale.intervals);
+        const modeCount = selectedScale.intervals.length;
+
+        let outputHtml = `<h2>${rootInput} ${selectedScale.modeNames[0]} - All ${modeCount} Modes</h2>`;
+        outputHtml += `<div class="mode-grid">`;
+
+        for (let i = 0; i < modeCount; i++) {
+            let modeNotes = [];
+            for (let j = 0; j < modeCount; j++) {
+                modeNotes.push(baseScaleNotes[(i + j) % modeCount]);
+            }
+            outputHtml += `
+                <div class="mode-card">
+                    <h3>${i + 1}. ${modeNotes[0]} ${selectedScale.modeNames[i]}</h3>
+                    <p><strong>Notes:</strong> ${modeNotes.join(' - ')}</p>
+                </div>`;
+        }
+
+        outputHtml += `</div>`;
+        document.getElementById('output').innerHTML = outputHtml;
+    }
+</script>
+</body>
+</html>
